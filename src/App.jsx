@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaSun, FaMoon } from "react-icons/fa";
+import Particles from "./Background/Particles";
 
 export default function App() {
   const [pokemon, setPokemons] = useState([]);
@@ -68,22 +69,27 @@ export default function App() {
 
   return (
     <>
-      <div>
-      <div className="relative hover:shadow-purple-400 hover:shadow-md mt-2 p-4 mx-3 max-w-[7%] rounded-full border-slate-700 border">
-        <button
-          className={`absolute top-0 left-0 px-4 py-2 bg-gradient-to-l to-purple-400 from-cyan-500  text-white rounded-full transform transition-transform duration-300 ${isShifted ? 'translate-x-10' : 'translate-x-0'}`}
-          onClick={toggleDarkMode}
-        >
-          {darkMode ? (
-            <FaSun className="text-yellow-30" />
-          ) : (
-            <FaMoon className="text-black" />
-          )}
-        </button>
-      </div>
+      <Particles className="absolute inset-0 -z-10" />
+      <div className="">
+        <div className="relative hover:shadow-purple-400 hover:shadow-md mt-2 p-4 mx-3 max-w-[27%] md:max-w-[7%] rounded-full border-slate-700 border">
+          <button
+            className={`absolute top-0 left-0 px-4 py-2 bg-gradient-to-l to-purple-400 from-cyan-500  text-white rounded-full transform transition-transform duration-300 ${
+              isShifted ? "translate-x-10" : "translate-x-0"
+            }`}
+            onClick={toggleDarkMode}
+          >
+            {darkMode ? (
+              <FaSun className="text-yellow-30" />
+            ) : (
+              <FaMoon className="text-black" />
+            )}
+          </button>
+        </div>
 
         {isLoading ? (
-          <div className="text-center">Loading...</div>
+          <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full border-t-4 border-blue-700 border-opacity-25 h-16 w-16"></div>
+          </div>
         ) : (
           <div className="container mx-auto w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -161,7 +167,7 @@ export default function App() {
         <div className="absolute">
           {prevUrl && (
             <button
-              className="fixed bg-yellow-400 hover:bg-gradient-to-r from-yellow-500 to-yellow-800 text-white px-4 rounded-lg left-4 bottom-72 text-5xl"
+              className="fixed  hover:shadow-yellow-300 hover:shadow-md bg-yellow-400 hover:bg-gradient-to-r from-yellow-600 to-yellow-300 text-white px-4 rounded-lg left-4 bottom-72 text-5xl"
               onClick={() => setCurrentUrl(prevUrl)}
             >
               &laquo;
@@ -169,7 +175,7 @@ export default function App() {
           )}
           {nextUrl && (
             <button
-              className="fixed lg:left-[95%] left-[85%] bg-yellow-400 hover:bg-gradient-to-r from-yellow-500 to-yellow-800 text-white px-4 rounded-lg bottom-72 text-5xl"
+              className="fixed lg:left-[95%] left-[85%] hover:shadow-yellow-300 hover:shadow-md bg-yellow-400 hover:bg-gradient-to-r from-yellow-600 to-yellow-300 text-white px-4 rounded-lg bottom-72 text-5xl"
               onClick={() => setCurrentUrl(nextUrl)}
             >
               &raquo;
