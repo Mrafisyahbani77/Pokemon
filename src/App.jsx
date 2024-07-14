@@ -4,6 +4,7 @@ import { FaSun, FaMoon } from "react-icons/fa";
 
 export default function App() {
   const [pokemon, setPokemons] = useState([]);
+  const [isShifted, setIsShifted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [pokemonDetail, setPokemonDetail] = useState([]);
   const [opened, setOpened] = useState(false);
@@ -30,6 +31,7 @@ export default function App() {
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
+    setIsShifted(!isShifted);
   };
 
   useEffect(() => {
@@ -67,19 +69,21 @@ export default function App() {
   return (
     <>
       <div>
+      <div className="relative hover:shadow-purple-400 hover:shadow-md mt-2 p-4 mx-3 max-w-[7%] rounded-full border-slate-700 border">
         <button
-          className="px-2 py-2 bg-gradient-to-l to-purple-400 from-cyan-500 hover:shadow-purple-400 hover:shadow-lg hover:shadow-gradient-to-l hover:from-purple-400 hover:to-cyan-500 text-white rounded-full float-right "
+          className={`absolute top-0 left-0 px-4 py-2 bg-gradient-to-l to-purple-400 from-cyan-500  text-white rounded-full transform transition-transform duration-300 ${isShifted ? 'translate-x-10' : 'translate-x-0'}`}
           onClick={toggleDarkMode}
         >
           {darkMode ? (
-            <FaSun className="text-yellow-300" />
+            <FaSun className="text-yellow-30" />
           ) : (
             <FaMoon className="text-black" />
           )}
         </button>
+      </div>
 
         {isLoading ? (
-          <div>Loading...</div>
+          <div className="text-center">Loading...</div>
         ) : (
           <div className="container mx-auto w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -90,12 +94,12 @@ export default function App() {
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
                 >
-                  <div className="border-2 hover:shadow-purple-400 hover:shadow-full hover:shadow-gradient-to-l hover:from-purple-400 hover:to-cyan-500 bg-yellow-400 rounded-md px-7">
+                  <div className="border-2 cursor-pointer border-purple-400 hover:shadow-purple-400 hover:shadow-full hover:shadow-gradient-to-l hover:from-purple-400 hover:to-yellow-400 bg-gradient-to-br from-yellow-400 to-purple-500 rounded-md px-7">
                     <div className="relative ">
                       <img
                         src={pokemon.sprites.other.dream_world.front_default}
                         alt={pokemon.name}
-                        className={`max-w-48 mx-auto max-h-40 p-3 transition-transform duration-500 ${
+                        className={`max-w-48 mx-auto max-h-40 p-3  transition-transform duration-500 ${
                           hoveredIndex === index ? "transform scale-75" : ""
                         }`}
                       />
@@ -126,7 +130,7 @@ export default function App() {
               <img
                 src={detailSelect.sprites.other.dream_world.front_default}
                 alt={detailSelect.name}
-                className="max-w-full mx-auto p-3"
+                className="max-w-full float-animation  mx-auto p-3"
               />
               <div>
                 <div className="flex justify-center items-center">
@@ -136,7 +140,7 @@ export default function App() {
                   {detailSelect.abilities.map((item, index) => (
                     <div
                       key={index}
-                      className="text-xl mt-5 border cursor-pointer p-5 border-slate-500 font-semibold hover:bg-slate-700 hover:text-white transition duration-300 ease-in-out"
+                      className="text-xl mt-5 border cursor-pointer p-5 bg-gradient-to-l rounded-xl font-semibold to-purple-400 from-cyan-500 hover:shadow-purple-400 hover:shadow-xl hover:shadow-gradient-to-l hover:from-purple-400 hover:to-cyan-500 hover:text-white transition duration-300 ease-in-out"
                     >
                       {item.ability.name}
                     </div>
