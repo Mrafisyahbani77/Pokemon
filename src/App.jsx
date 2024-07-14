@@ -1,27 +1,51 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { FaSun, FaMoon } from "react-icons/fa";
 
 export default function App() {
-  const [pokemons, setPokemons] = useState([]);
+  const [pokemon, setPokemons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pokemonDetail, setPokemonDetail] = useState([]);
   const [opened, setOpened] = useState(false);
   const [detailSelect, setDetailSelect] = useState(null);
-  const [currentUrl, setCurrentUrl] = useState("https://pokeapi.co/api/v2/pokemon");
+  const [currentUrl, setCurrentUrl] = useState(
+    "https://pokeapi.co/api/v2/pokemon"
+  );
   const [prevUrl, setPrevUrl] = useState("");
   const [nextUrl, setNextUrl] = useState("");
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
 
   useEffect(() => {
     setIsLoading(true);
-    axios.get(currentUrl)
+    axios
+      .get(currentUrl)
       .then(function (response) {
         setPokemons(response.data.results);
         setPrevUrl(response.data.previous);
         setNextUrl(response.data.next);
-        return Promise.all(response.data.results.map(pokemon => axios.get(pokemon.url)));
+        return Promise.all(
+          response.data.results.map((pokemon) => axios.get(pokemon.url))
+        );
       })
-      .then(pokemonResponses => {
-        setPokemonDetail(pokemonResponses.map(pokeRes => pokeRes.data));
+      .then((pokemonResponses) => {
+        setPokemonDetail(pokemonResponses.map((pokeRes) => pokeRes.data));
         setIsLoading(false);
       })
       .catch(function (error) {
@@ -43,28 +67,52 @@ export default function App() {
   return (
     <>
       <div>
+        <button
+          className="px-2 py-2 bg-gradient-to-l to-purple-400 from-cyan-500 hover:shadow-purple-400 hover:shadow-lg hover:shadow-gradient-to-l hover:from-purple-400 hover:to-cyan-500 text-white rounded-full float-right "
+          onClick={toggleDarkMode}
+        >
+          {darkMode ? (
+            <FaSun className="text-yellow-300" />
+          ) : (
+            <FaMoon className="text-black" />
+          )}
+        </button>
+
         {isLoading ? (
           <div>Loading...</div>
         ) : (
           <div className="container mx-auto w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {pokemonDetail.map((pokemon, index) => (
-                <div className="p-5" key={index}>
-                  <div className="border-2 px-7">
-                    <div>
+                <div
+                  className="p-5"
+                  key={index}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                >
+                  <div className="border-2 hover:shadow-purple-400 hover:shadow-full hover:shadow-gradient-to-l hover:from-purple-400 hover:to-cyan-500 bg-yellow-400 rounded-md px-7">
+                    <div className="relative ">
                       <img
                         src={pokemon.sprites.other.dream_world.front_default}
                         alt={pokemon.name}
-                        className="max-w-48 mx-auto max-h-40 p-3"
+                        className={`max-w-48 mx-auto max-h-40 p-3 transition-transform duration-500 ${
+                          hoveredIndex === index ? "transform scale-75" : ""
+                        }`}
                       />
+                      {hoveredIndex === index && (
+                        <>
+                          <h1 className="font-semibold mt-3 text-2xl">
+                            Name : {pokemon.name}
+                          </h1>
+                          <button
+                            onClick={() => handleOpened(pokemon)}
+                            className="py-5 bg-gradient-to-l to-purple-400 from-cyan-500 hover:shadow-purple-400 hover:shadow-lg hover:shadow-gradient-to-l hover:from-purple-400 hover:to-cyan-500 px-7 rounded-md mb-4 mt-3 font-semibold text-white"
+                          >
+                            Detail
+                          </button>
+                        </>
+                      )}
                     </div>
-                    <h1 className="font-bold mt-3 text-2xl">Name : {pokemon.name}</h1>
-                    <button
-                      onClick={() => handleOpened(pokemon)}
-                      className="py-5 bg-cyan-500 px-7 rounded-md mb-4 mt-3 font-semibold text-white"
-                    >
-                      Detail
-                    </button>
                   </div>
                 </div>
               ))}
@@ -109,7 +157,7 @@ export default function App() {
         <div className="absolute">
           {prevUrl && (
             <button
-              className="fixed bg-slate-600 text-white px-4 rounded-md left-5 bottom-72 text-5xl"
+              className="fixed bg-yellow-400 hover:bg-gradient-to-r from-yellow-500 to-yellow-800 text-white px-4 rounded-lg left-4 bottom-72 text-5xl"
               onClick={() => setCurrentUrl(prevUrl)}
             >
               &laquo;
@@ -117,7 +165,7 @@ export default function App() {
           )}
           {nextUrl && (
             <button
-              className="fixed lg:left-[95%] left-[85%] bg-slate-600 text-white px-4 rounded-md bottom-72 text-5xl"
+              className="fixed lg:left-[95%] left-[85%] bg-yellow-400 hover:bg-gradient-to-r from-yellow-500 to-yellow-800 text-white px-4 rounded-lg bottom-72 text-5xl"
               onClick={() => setCurrentUrl(nextUrl)}
             >
               &raquo;
